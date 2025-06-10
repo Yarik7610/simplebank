@@ -1,0 +1,11 @@
+version: "2"
+sql:
+  - engine: "postgresql"
+    queries: "./db/queries" # Папка для sql-кода
+    schema: "./db/migrations" # Схема это наши миграции
+    gen:
+      go:
+        package: "db" # Название пакета, к которому будем обращаться
+        out: "./internal/db" # Место сгенерированного Go-кода
+        emit_json_tags: true # Добавление json тегов
+        emit_exact_table_names: false # Генерация в единственном числе таблиц для структур

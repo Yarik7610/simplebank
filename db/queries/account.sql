@@ -7,7 +7,7 @@ RETURNING *;
 SELECT * FROM accounts
 WHERE id = $1;
 
--- name: ListAuthors :many
+-- name: ListAccounts :many
 SELECT * FROM accounts
 ORDER BY id
 FETCH FIRST $1 ROWS ONLY

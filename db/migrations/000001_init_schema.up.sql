@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS "transfers" (
   "id" bigserial PRIMARY KEY,
   "from_account_id" bigint NOT NULL,
   "to_account_id" bigint NOT NULL,
-  "amount" bigint NOT NULL,
+  "amount" bigint NOT NULL CHECK("amount" > 0),
   "created_at" timestamptz NOT NULL DEFAULT (now())
 );
 

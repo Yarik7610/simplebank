@@ -1,4 +1,4 @@
--- name: CreteEntry :one
+-- name: CreateEntry :one
 INSERT INTO entries (account_id, amount)
 VALUES ($1, $2)
 RETURNING *;
@@ -9,6 +9,7 @@ WHERE id = $1;
 
 -- name: ListEntries :many
 SELECT * FROM entries
+WHERE account_id = $1
 ORDER BY id
-FETCH FIRST $1 ROWS ONLY
-OFFSET $2 ROWS;
+FETCH FIRST $2 ROWS ONLY
+OFFSET $3 ROWS;

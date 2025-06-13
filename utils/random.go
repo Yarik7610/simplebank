@@ -27,8 +27,16 @@ func RandomOwner() string {
 	return RandomString(6)
 }
 
-func RandomBalance() int64 {
+func RandomPositiveAmount() int64 {
 	return RandomInt64(0, 1000)
+}
+
+func RandomNegativeAmount() int64 {
+	return -1 * RandomInt64(0, 1000)
+}
+
+func RandomAmount() int64 {
+	return RandomInt64(-1000, 1000)
 }
 
 var currencies = []string{"EUR", "USD", "CAD"}

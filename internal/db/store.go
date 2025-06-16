@@ -71,18 +71,15 @@ func (s *Store) TransferTx(ctx context.Context, arg CreateTransferParams) (Trans
 			return err
 		}
 
-		result.FromAccount, err = q.AddAccountBalance(context.Background(), AddAccountBalanceParams{
-			ID:     arg.FromAccountID,
-			Amount: -arg.Amount,
-		})
+		// make always same update order by smallest id
+		firstAddAccountBalanceParams, secondAddAccountBalanceParams := getAddAccountBalancesParams(arg.FromAccountID, arg.ToAccountID, arg.Amount)
+
+		result.FromAccount, err = q.AddAccountBalance(context.Background(), firstAddAccountBalanceParams)
 		if err != nil {
 			return err
 		}
 
-		result.ToAccount, err = q.AddAccountBalance(context.Background(), AddAccountBalanceParams{
-			ID:     arg.ToAccountID,
-			Amount: arg.Amount,
-		})
+		result.ToAccount, err = q.AddAccountBalance(context.Background(), secondAddAccountBalanceParams)
 		if err != nil {
 			return err
 		}
@@ -91,4 +88,15 @@ func (s *Store) TransferTx(ctx context.Context, arg CreateTransferParams) (Trans
 	})
 
 	return result, err
+}
+
+func getAddAccountBalancesParams(fromAccountID, toAccountID, amount int64) (firstAddAccountBalanceParams, secondAddAccountBalanceParams AddAccountBalanceParams) {
+	if fromAccountID < toAccountID {
+		firstAddAccountBalanceParams = AddAccountBalanceParams{fromAccountID, -amount}
+		secondAddAccountBalanceParams = AddAccountBalanceParams{toAccountID, amount}
+	} else {
+		firstAddAccountBalanceParams = AddAccountBalanceParams{toAccountID, amount}
+		secondAddAccountBalanceParams = AddAccountBalanceParams{fromAccountID, -amount}
+	}
+	return
 }

@@ -13,13 +13,13 @@ func TestTransferTx(t *testing.T) {
 	account1 := createRandomAccount(t)
 	account2 := createRandomAccount(t)
 
-	n := 5
+	transactionsCount := 5
 	amount := int64(10)
 
 	results := make(chan TransferTxResult)
 	errors := make(chan error)
 
-	for range n {
+	for range transactionsCount {
 		go func() {
 			result, err := s.TransferTx(context.Background(), CreateTransferParams{
 				FromAccountID: account1.ID,
@@ -32,13 +32,16 @@ func TestTransferTx(t *testing.T) {
 		}()
 	}
 
-	for range n {
+	existed := make(map[int]bool)
+
+	for range transactionsCount {
 		err := <-errors
 		require.NoError(t, err)
 
 		result := <-results
 		require.NotEmpty(t, result)
 
+		// test transfer
 		transfer := result.Transfer
 		require.NotEmpty(t, transfer)
 		require.Equal(t, account1.ID, transfer.FromAccountID)
@@ -50,6 +53,7 @@ func TestTransferTx(t *testing.T) {
 		_, err = s.GetTransfer(context.Background(), transfer.ID)
 		require.NoError(t, err)
 
+		// test entries
 		fromEntry := result.FromEntry
 		require.NotEmpty(t, fromEntry)
 		require.Equal(t, account1.ID, fromEntry.AccountID)
@@ -70,6 +74,33 @@ func TestTransferTx(t *testing.T) {
 		_, err = s.GetEntry(context.Background(), toEntry.ID)
 		require.NoError(t, err)
 
-		//TODO check accounts balances
+		// test accounts
+		fromAccount := result.FromAccount
+		require.NotEmpty(t, fromAccount)
+		require.Equal(t, account1.ID, fromAccount.ID)
+
+		toAccount := result.ToAccount
+		require.NotEmpty(t, toAccount)
+		require.Equal(t, account2.ID, toAccount.ID)
+
+		diff1 := account1.Balance - fromAccount.Balance
+		diff2 := toAccount.Balance - account2.Balance
+		require.Equal(t, diff1, diff2)
+		require.True(t, diff1 > 0)
+		require.True(t, diff1%amount == 0) // 1 * amount, 2 * amount, ... * amount
+
+		k := int(diff1 / amount)
+		require.True(t, k >= 1 && k <= transactionsCount)
+		require.NotContains(t, existed, k)
+		existed[k] = true
 	}
+
+	updatedAccount1, err := testQueries.GetAccount(context.Background(), account1.ID)
+	require.NoError(t, err)
+
+	updatedAccount2, err := testQueries.GetAccount(context.Background(), account2.ID)
+	require.NoError(t, err)
+
+	require.Equal(t, account1.Balance-int64(transactionsCount)*amount, updatedAccount1.Balance)
+	require.Equal(t, account2.Balance+int64(transactionsCount)*amount, updatedAccount2.Balance)
 }

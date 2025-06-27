@@ -17,6 +17,8 @@ func NewServer(store *db.Store) *Server {
 	router.POST("/accounts", server.createAccount)
 	router.GET("/accounts", server.listAccounts)
 	router.GET("/accounts/:id", server.getAccount)
+	// TODO: allow deleting only yourself, make route DELETE '/accounts/me'
+	router.DELETE("/accounts/:id", server.deleteAccount)
 
 	server.router = router
 	return server

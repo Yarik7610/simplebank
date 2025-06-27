@@ -21,6 +21,10 @@ func main() {
 		log.Fatalf("can't connect to db: %s", err)
 	}
 
+	if err = conn.Ping(); err != nil {
+		log.Fatalf("can't ping db: %s", err)
+	}
+
 	store := db.NewStore(conn)
 	server := api.NewServer(store)
 

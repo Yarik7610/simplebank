@@ -10,7 +10,7 @@ import (
 )
 
 var testQueries *Queries
-var testDB *sql.DB
+var conn *sql.DB
 
 const (
 	dbDriver = "postgres"
@@ -20,12 +20,16 @@ const (
 func TestMain(t *testing.M) {
 	var err error
 
-	testDB, err = sql.Open(dbDriver, dbSource)
+	conn, err = sql.Open(dbDriver, dbSource)
 	if err != nil {
-		log.Fatalf("cannot connect to database: %s", err)
+		log.Fatalf("can't connect to db: %s", err)
 	}
 
-	testQueries = New(testDB)
+	if err = conn.Ping(); err != nil {
+		log.Fatalf("can't ping db: %s", err)
+	}
+
+	testQueries = New(conn)
 
 	os.Exit(t.Run())
 }

@@ -8,7 +8,7 @@ import (
 )
 
 func TestTransferTx(t *testing.T) {
-	s := NewStore(testDB)
+	s := NewStore(conn)
 
 	account1 := createRandomAccount(t)
 	account2 := createRandomAccount(t)
@@ -106,7 +106,7 @@ func TestTransferTx(t *testing.T) {
 }
 
 func TestTransferTxDeadlock(t *testing.T) {
-	s := NewStore(testDB)
+	s := NewStore(conn)
 
 	account1 := createRandomAccount(t)
 	account2 := createRandomAccount(t)

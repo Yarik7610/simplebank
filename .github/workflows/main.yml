@@ -23,7 +23,7 @@ jobs:
         image: postgres:12
         env:
           POSTGRES_USER: ${{ secrets.DB_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD}}
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
           POSTGRES_DB: ${{ secrets.DB_NAME }}
         options: >-
           --health-cmd pg_isready
@@ -46,6 +46,9 @@ jobs:
 
       - name: Run migrations
         run: migrate -path db/migrations -database=$DB_SOURCE up
+
+      - name: Print env
+        run: printenv | grep DB_
 
       - name: Test
         run: go test -count=1 -v ./...

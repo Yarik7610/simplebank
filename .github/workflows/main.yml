@@ -46,7 +46,7 @@ jobs:
         run: rm -f app.env
 
       - name: Run migrations
-        run: make migrateup
+        run: migrate -path db/migrations -database=$DB_SOURCE up
 
       - name: Test
         run: make test

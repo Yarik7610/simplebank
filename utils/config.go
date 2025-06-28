@@ -1,6 +1,10 @@
 package utils
 
-import "github.com/spf13/viper"
+import (
+	"log"
+
+	"github.com/spf13/viper"
+)
 
 type Config struct {
 	DBDriver          string `mapstructure:"DB_DRIVER"`
@@ -17,9 +21,14 @@ func LoadConfig(path string) (config Config, err error) {
 
 	err = viper.ReadInConfig()
 	if err != nil {
-		return
+		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
+			log.Println("No config file found, loading ENV vars from OS")
+		} else {
+			return
+		}
 	}
 
 	err = viper.Unmarshal(&config)
+	log.Printf("CONFIG: %s\n", config)
 	return
 }

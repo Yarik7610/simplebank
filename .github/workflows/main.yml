@@ -47,8 +47,5 @@ jobs:
       - name: Run migrations
         run: migrate -path db/migrations -database=$DB_SOURCE up
 
-      - name: Print env
-        run: printenv | grep DB_
-
       - name: Test
         run: go test -count=1 -v ./...

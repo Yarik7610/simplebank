@@ -2,7 +2,7 @@ include app.env
 export 
 
 postgres:
-	docker run --name postgres12 -p $(DB_PORT):5432 -d -e POSTGRES_USER=$(DB_USER) -e POSTGRES_PASSWORD=$(DB_PASSWORD) postgres:12-alpine
+	docker run --name postgres12 -p 5432:5432 -d -e POSTGRES_USER=$(DB_USER) -e POSTGRES_PASSWORD=$(DB_PASSWORD) postgres:12-alpine
 
 createdb:
 	docker exec -it postgres12 createdb --username=$(DB_USER) --owner=$(DB_USER) $(DB_NAME)

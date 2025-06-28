@@ -1,17 +1,20 @@
+include app.env
+export 
+
 postgres:
-	docker run --name postgres12 -p 5433:5432 -d -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret postgres:12-alpine
+	docker run --name postgres12 -p $(DB_PORT):5432 -d -e POSTGRES_USER=$(DB_USER) -e POSTGRES_PASSWORD=$(DB_PASSWORD) postgres:12-alpine
 
 createdb:
-	docker exec -it postgres12 createdb --username=root --owner=root simple_bank
+	docker exec -it postgres12 createdb --username=$(DB_USER) --owner=$(DB_USER) $(DB_NAME)
 
 dropdb:
-	docker exec -it postgres12 dropdb simple_bank
+	docker exec -it postgres12 dropdb $(DB_NAME)
 
 migrateup:
-	migrate -path db/migrations -database="postgres://root:secret@localhost:5433/simple_bank?sslmode=disable" up
+	migrate -path db/migrations -database="$(DB_SOURCE)" up
 
 migratedown:
-	migrate -path db/migrations -database="postgres://root:secret@localhost:5433/simple_bank?sslmode=disable" down
+	migrate -path db/migrations -database="$(DB_SOURCE)" down
 
 sqlc:
 	sqlc generate

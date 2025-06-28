@@ -42,11 +42,8 @@ jobs:
       - name: Install golang-migrate
         run: go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 
-      - name: Remove app.env to use github secrets
-        run: rm -f app.env
-
       - name: Run migrations
         run: migrate -path db/migrations -database=$DB_SOURCE up
 
       - name: Test
-        run: make test
+        run: go test -count=1 -v ./...

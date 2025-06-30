@@ -10,3 +10,4 @@ sql:
         emit_json_tags: true # Добавление json тегов
         emit_exact_table_names: false # Генерация в единственном числе таблиц для структур
         emit_empty_slices: true # Вместо null будет пустой массив отправлен при GET-запросах
+        emit_interface: true # Создает интерфейс со всеми SQL-комллированными методами

@@ -12,11 +12,10 @@ jobs:
 
     env:
       DB_DRIVER: ${{ secrets.DB_DRIVER }}
-      DB_PORT: ${{ secrets.DB_PORT }}
       DB_USER: ${{ secrets.DB_USER }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       DB_NAME: ${{ secrets.DB_NAME }}
-      DB_SOURCE: postgresql://${{ secrets.DB_USER }}:${{ secrets.DB_PASSWORD }}@localhost:${{ secrets.DB_PORT }}/${{ secrets.DB_NAME }}?sslmode=disable
+      DB_SOURCE: postgresql://${{ secrets.DB_USER }}:${{ secrets.DB_PASSWORD }}@localhost:5432/${{ secrets.DB_NAME }}?sslmode=disable
       HTTP_SERVER_ADDRESS: ${{ secrets.HTTP_SERVER_ADDRESS }}
 
     services:
@@ -32,7 +31,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
         ports:
-          - ${{ secrets.DB_PORT }}:5432
+          - 5432:5432
 
     steps:
       - uses: actions/checkout@v4
